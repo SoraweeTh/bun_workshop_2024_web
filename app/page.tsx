@@ -1,7 +1,7 @@
 'use client';
 
 import Swal from "sweetalert2";
-import config from "./config";
+import { config } from "./config";
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -31,7 +31,13 @@ export default function Home() {
       const response = await axios.post(`${config.apiUrl}/api/user/signin`, payload);
       if (response.data.token !== undefined) {
         localStorage.setItem(config.tokenKey, response.data.token);
-        router.push('/dashboard');
+        router.push('/backoffice/dashboard');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'error',
+          text: 'Invalid username or password'
+        })
       }
     } catch (err: any) {
       Swal.fire({
