@@ -31,6 +31,8 @@ export default function Home() {
       const response = await axios.post(`${config.apiUrl}/api/user/signin`, payload);
       if (response.data.token !== undefined) {
         localStorage.setItem(config.tokenKey, response.data.token);
+        localStorage.setItem('bun_service_name', response.data.user.username);
+        localStorage.setItem('bun_service_level', response.data.user.level);
         router.push('/backoffice/dashboard');
       } else {
         Swal.fire({
