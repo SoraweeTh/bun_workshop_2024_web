@@ -1,3 +1,7 @@
 export default function Page() {
-    return <div>Dashboard</div>
+    return (
+        <div className="card">
+            <h1>Dashboard</h1>
+        </div>
+    );
 }

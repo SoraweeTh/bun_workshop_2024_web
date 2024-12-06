@@ -61,5 +61,45 @@ body {
 }
 
 .btn-primary {
-  @apply bg-indigo-500 text-white px-4 py-2 rounded-full mt-5 hover:bg-indigo-600;
+  @apply bg-indigo-500 text-white px-4 py-2 rounded-2xl mt-2 hover:bg-indigo-600;
+}
+
+.table {
+  @apply w-full mt-3;
+}
+
+.table th {
+  @apply text-left p-4 bg-gray-950 text-gray-400;
+}
+
+.table th:first-child {
+  @apply rounded-tl-lg;
+}
+
+.table th:last-child {
+  @apply rounded-tr-lg;
+}
+
+.table tbody td {
+  @apply p-4 bg-gray-900 text-gray-400;
+}
+
+.table tbody tr td {
+  @apply border-b border-gray-800;
+}
+
+.table tbody tr:last-child td:first-child {
+  @apply rounded-bl-lg;
+}
+
+.table tbody tr:last-child td:last-child {
+  @apply rounded-br-lg;
+}
+
+.btn-edit {
+  @apply bg-gray-500 hover:bg-gray-600 text-blue-400 px-4 py-2 rounded-full mr-1;
+}
+
+.btn-delete {
+  @apply bg-gray-500 hover:bg-gray-600 text-red-400 px-4 py-2 rounded-full;
 }
