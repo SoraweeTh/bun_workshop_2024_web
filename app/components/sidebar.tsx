@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export function Sidebar() {
     const menuItems = [
-        { title: 'Dashboard', href: 'dashboard', icon: 'fa-solid fa-chart-simple' },
-        { title: 'Staff Member', href: '/dashboard/user', icon: 'fa-solid fa-users' },
+        { title: 'Dashboard', href: '/backoffice/dashboard', icon: 'fa-solid fa-chart-simple' },
+        { title: 'Staff Member', href: '/backoffice/user', icon: 'fa-solid fa-users' },
         { title: 'Repair Record', href: '/dashboard/repair-record', icon: 'fa-solid fa-screwdriver' },
         { title: 'Repair Status', href: '/dashboard/repair-status', icon: 'fa-solid fa-gear' },
         { title: 'Mechanic Report', href: '/dashboard/mechanic-report', icon: 'fa-solid fa-right-from-bracket' },

@@ -96,10 +96,14 @@ body {
   @apply rounded-br-lg;
 }
 
+.table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
 .btn-edit {
-  @apply bg-gray-500 hover:bg-gray-600 text-blue-400 px-4 py-2 rounded-full mr-1;
+  @apply bg-gray-600 hover:bg-gray-700 text-blue-400 px-4 py-2 rounded-md mr-1;
 }
 
 .btn-delete {
-  @apply bg-gray-500 hover:bg-gray-600 text-red-400 px-4 py-2 rounded-full;
+  @apply bg-gray-600 hover:bg-gray-700 text-red-400 px-4 py-2 rounded-md;
 }

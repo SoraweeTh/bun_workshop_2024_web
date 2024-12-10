@@ -163,10 +163,10 @@ export default function Page() {
                     <input type="date" className="form-control" value={expiredDate} 
                         onChange={(e) => setExpiredDate(e.target.value)} />
                     <div className="mt-3">Remark</div>
-                    <input type="text" className="form-control" value={remark} 
+                    <input type="text" className="form-control mb-3" value={remark} 
                         onChange={(e) => setRemark(e.target.value)} />
 
-                    <button className="btn btn-primary mt-3" onClick={handleSave}>
+                    <button className="btn btn-primary" onClick={handleSave}>
                         <i className="fa-solid fa-check mr-3"></i>
                         Save
                     </button>
