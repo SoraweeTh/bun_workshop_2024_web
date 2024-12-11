@@ -35,7 +35,7 @@ body {
   @apply flex items-center p-2 text-gray-300 rounded hover:bg-gray-300 hover:text-gray-800;
 }
 .sidebar-nav {
-  @apply p-4 bg-gradient-to-t from-gray-700 to-gray-950 border-t border-gray-700 min-h-screen;
+  @apply ml-3 p-4 bg-gradient-to-t from-gray-700 to-gray-950 border-t border-gray-700 min-h-screen;
 }
 .sidebar-nav ul {
   @apply space-y-2;

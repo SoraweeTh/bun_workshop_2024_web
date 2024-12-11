@@ -12,7 +12,7 @@ export default function DashboardLayout({
 
             <div className="flex bg-gray-800">
                 <Sidebar/>
-                <main className="flex-1 p-6 bg-gradient-to-t from-gray-600 to-gray-950 rounded">
+                <main className="flex-1 p-6 bg-gradient-to-t from-gray-600 to-gray-950 rounded-2xl">
                     {children}
                 </main>
             </div>
