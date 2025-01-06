@@ -110,7 +110,7 @@ export default function Page() {
             <div className="card-body">
                 <button className="btn btn-primary" onClick={handleShowModal}>
                     <i className="fa-solid fa-plus mr-2"></i>
-                    Add
+                    Add device
                 </button>
 
                 <table className="table table-striped">

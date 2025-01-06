@@ -22,7 +22,16 @@ export default function Page() {
 
     useEffect(() => {
         fetchUsers();
-        fetchDepartments();
+
+        const initializeData = async () => {
+            await fetchDepartments();
+            if (departments.length > 0) {
+                const initialDepartmentId = (departments[0] as any).id;
+                setDepartmentId(initialDepartmentId);
+                await fetchSections(initialDepartmentId)
+            }
+        }
+        initializeData();
     }, []);
 
     const fetchDepartments = async () => {
@@ -97,7 +106,7 @@ export default function Page() {
         }
     }
 
-    const handleEdit = (user: any) => {
+    const handleEdit = async (user: any) => {
         setId(user.id);
         setUsername(user.username);
         setPassword('');
@@ -105,7 +114,13 @@ export default function Page() {
         setLevel(user.level);
         handleShowModal();
 
-        // pending...
+        const selectedDepartmentId = user?.section?.department?.id ?? (departments[0] as any).id;
+        setDepartmentId(selectedDepartmentId);
+
+        await fetchSections(selectedDepartmentId);
+
+        const sectionId = user?.section?.id;
+        setSectionId(sectionId);
     }
 
     const handleDelete = async (id: string) => {
@@ -131,14 +146,14 @@ export default function Page() {
             <div className="card-body">
                 <button className="btn btn-primary" onClick={handleShowModal}>
                     <i className="fa-solid fa-plus mr-2"></i>
-                    Add data
+                    Add member
                 </button>
 
                 <table className="table table-striped mt-5">
                     <thead>
                         <tr>
                             <th>Username</th>
-                            <th style={{width: '100px;'}}>Level</th>
+                            <th>Level</th>
                             <th>Department</th>
                             <th>Section</th>
                             <th></th>
@@ -154,13 +169,13 @@ export default function Page() {
                                 <td className=" text-center">
                                     <button className="btn-edit" 
                                         onClick={() => handleEdit(user)}>
-                                        <i className="fa-solid fa-edit mr-2"></i>
-                                        Edit
+                                        <i className="fa-solid fa-edit"></i>
+                                        
                                     </button>
                                     <button className="btn-delete" 
                                         onClick={() => handleDelete(user.id)}>
-                                        <i className="fa-solid fa-trash mr-2"></i>
-                                        Delete
+                                        <i className="fa-solid fa-trash"></i>
+                                        
                                     </button>
                                 </td>
                             </tr>

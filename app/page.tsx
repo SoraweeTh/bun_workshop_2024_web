@@ -51,7 +51,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-gray-500 to-gray-950">
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-gray-700 to-gray-950">
       <div className="text-gray-50 text-4xl font-bold mb-10">Bun Service System 2025</div>
       <div className="bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
         <h1 className="text-2xl font-bold mb-4 text-gray-50">Login</h1>
