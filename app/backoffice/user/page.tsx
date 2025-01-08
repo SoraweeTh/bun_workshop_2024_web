@@ -10,7 +10,7 @@ export default function Page() {
     const [showModal, setShowModal] = useState(false);
     const [users, setUsers] = useState([]);
     const [levels, setLevels] = useState(['admin', 'user', 'engineer']);
-    const [id, setId] = useState(0);
+    const [id, setId] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -58,6 +58,13 @@ export default function Page() {
     }
 
     const handleShowModal = () => {
+        setDepartmentId('');
+        setSectionId('');
+        setId('');
+        setUsername('');
+        setPassword('');
+        setConfirmPassword('');
+        setLevel('');
         setShowModal(true);
     }
 
@@ -83,11 +90,11 @@ export default function Page() {
                 sectionId: parseInt(sectionId + "")
             }
 
-            if (id == 0) {
+            if (id == '') {
                 await axios.post(`${config.apiUrl}/api/user/create`, payload);
             } else {
                 await axios.put(`${config.apiUrl}/api/user/updateUser/${id}`, payload);
-                setId(0);
+                setId('');
             }
 
             fetchUsers();
@@ -102,7 +109,7 @@ export default function Page() {
                 icon: 'error',
                 title: 'Error',
                 text: err.message
-            })
+            });
         }
     }
 
@@ -112,7 +119,7 @@ export default function Page() {
         setPassword('');
         setConfirmPassword('');
         setLevel(user.level);
-        handleShowModal();
+        setShowModal(true);
 
         const selectedDepartmentId = user?.section?.department?.id ?? (departments[0] as any).id;
         setDepartmentId(selectedDepartmentId);
@@ -166,16 +173,16 @@ export default function Page() {
                                 <td>{user.level}</td>
                                 <td>{user?.section?.department?.name}</td>
                                 <td>{user?.section?.name}</td>
-                                <td className=" text-center">
+                                <td className=" text-right">
                                     <button className="btn-edit" 
                                         onClick={() => handleEdit(user)}>
-                                        <i className="fa-solid fa-edit"></i>
-                                        
+                                        <i className="fa-solid fa-edit mr-2"></i>
+                                        แก้ไข
                                     </button>
                                     <button className="btn-delete" 
                                         onClick={() => handleDelete(user.id)}>
-                                        <i className="fa-solid fa-trash"></i>
-                                        
+                                        <i className="fa-solid fa-trash mr-2"></i>
+                                        ลบ
                                     </button>
                                 </td>
                             </tr>

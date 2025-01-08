@@ -68,6 +68,7 @@ export default function Page() {
     const handleEdit = (id: number) => {
         const repairRecord = repairRecords.find((repairRecord: any) => repairRecord.id === id) as any;
         if (repairRecord) {
+            // setEngineerId(repairRecord?.engineerId ?? 0);
             setId(id);
             setStatus(repairRecord?.status ?? '');
             setSolving(repairRecord?.solving ?? '')
@@ -83,6 +84,12 @@ export default function Page() {
                 engineerId: engineerId,
             }
             await axios.put(`${config.apiUrl}/api/repairRecord/updateStatus/${id}`, payload);
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกข้อมูล',
+                text: 'บันทึกข้อมูลสำเร็จ',
+                timer: 2000
+            });
             fetchRepairRecords();
             setShowModal(false);
         } catch (err: any) {
@@ -125,6 +132,7 @@ export default function Page() {
                     <table className="table mt-3">
                         <thead>
                             <tr>
+                                <th>ช่างซ่อม</th>
                                 <th>ชื่อลูกค้า</th>
                                 <th>เบอร์โทรศัพท์</th>
                                 <th>อุปกรณ์</th>
@@ -132,12 +140,13 @@ export default function Page() {
                                 <th>วันที่รับซ่อม</th>
                                 <th>วันที่ซ่อมเสร็จ</th>
                                 <th>สถานะ</th>
-                                <th style={{width: '230px'}}>Manage Status</th>
+                                <th style={{width: '230px'}}>จัดการสถานะ</th>
                             </tr>
                         </thead>
                         <tbody>
                             {repairRecords.map((repairRecord: any) => (
                                 <tr key={repairRecord.id}>
+                                    <td>{repairRecord.engineer?.username ?? '-'}</td>
                                     <td>{repairRecord.customerName}</td>
                                     <td>{repairRecord.customerPhone}</td>
                                     <td>{repairRecord.deviceSerial}</td>

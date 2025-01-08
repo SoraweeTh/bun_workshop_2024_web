@@ -22,10 +22,26 @@ export default function Page() {
     const [deviceId, setDeviceId] = useState('');
     const [expireDate, setExpireDate] = useState('');
     const [id, setId] = useState(0);
+    const [statusList, setStatusList] = useState([
+        {value: 'active', label: 'รอซ่อม'},
+        {value: 'pending', label: 'รอลูกค้ายืนยัน'},
+        {value: 'repairing', label: 'กำลังซ่อม'},
+        {value: 'done', label: 'ซ่อมเสร็จ'},
+        {value: 'cancel', label: 'ยกเลิก'},
+        {value: 'complete', label: 'ลูกค้ามารับอุปกรณ์'},
+    ]);
+
+    // 
+    //  รับเครื่อง 
+    //
+    const [showModalReceive, setShowModalReceive] = useState(false);
+    const [receiveCustomer, setReceiveCustomer] = useState('');
+    const [receiveAmount, setReceiveAmount] = useState(0);
+    const [receiveId, setReceiveId] = useState(0);
 
     useEffect(() => {
         fetchDevices();
-        fetchRepairRecord();
+        fetchRepairRecords();
     }, []);
 
     const fetchDevices = async () => {
@@ -42,7 +58,7 @@ export default function Page() {
         setId(0);
     }
 
-    const fetchRepairRecord = async () => {
+    const fetchRepairRecords = async () => {
         const response = await axios.get(`${config.apiUrl}/api/repairRecord/list`);
         setRepairRecords(response.data);
     }
@@ -87,38 +103,24 @@ export default function Page() {
             
             Swal.fire({
                 icon: 'success',
-                title: 'Save Data',
-                text: 'Saved successful',
-                timer: 1000
+                title: 'บันทึกข้อมูล',
+                text: 'บันทึกข้อมูลสำเร็จ',
+                timer: 2000
             });
             closeModal();
-            fetchRepairRecord();
+            fetchRepairRecords();
         } catch (err: any) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: err.message,
-            })
+            });
         }
     }
 
     const getStatusName = (status: string) => {
-        switch (status) {
-            case 'active':
-                return 'Active';
-            case 'pending':
-                return 'Pending';
-            case 'repairing':
-                return 'Repairing';
-            case 'done':
-                return 'Completed';
-            case 'cancel':
-                return 'Cancel';
-            case 'complete':
-                return 'End Job';
-            default:
-                return 'waiting repair';
-        }
+        const statusObj = statusList.find((item: any) => item.value === status);
+        return statusObj?.label ?? 'รอซ่อม';
     }
 
     const handleEdit = (repairRecord: any) => {
@@ -140,31 +142,69 @@ export default function Page() {
         const button = await config.confirmDialog();
         if (button.isConfirmed) {
             await axios.delete(`${config.apiUrl}/api/repairRecord/delete/${id}`);
-            fetchRepairRecord();
+            fetchRepairRecords();
         }
+    }
+
+    const openModalReceive = (repairRecord: any) => {
+        setShowModalReceive(true);
+        setReceiveCustomer(repairRecord.customerName);
+        setReceiveAmount(0);
+        setReceiveId(repairRecord.id);
+    }
+
+    const closeModalReceive = () => {
+        setShowModalReceive(false);
+        setReceiveId(0);
+    }
+
+    const handleReceive = async () => {
+        const payload = {
+            id: receiveId,
+            amount: receiveAmount
+        }
+        try {
+            await axios.put(`${config.apiUrl}/api/repairRecord/receive`, payload);
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกข้อมูล',
+                text: 'บันทึกข้อมูลสำเร็จ',
+                timer: 2000
+            });
+        } catch (err: any) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.message
+            })
+        }
+        
+        fetchRepairRecords();
+        closeModalReceive();
     }
 
     return (
         <>
             <div className="card">
-                <h1>Repair Record</h1>
+                <h1>บันทึกการซ่อม</h1>
                 <div className="card-body">
                     <button className="btn-primary" onClick={openModal}>
                         <i className="fa-solid fa-plus mr-2"></i>
-                        Add data
+                        เพิ่มอุปกรณ์
                     </button>
 
                     <table className="table mt-3">
                         <thead>
                             <tr>
-                                <th>Customer Name</th>
-                                <th>Phone</th>
-                                <th>Devices</th>
-                                <th>Problem</th>
-                                <th>Start Date</th>
-                                <th>End Job Date</th>
-                                <th>Status</th>
-                                <th style={{width: '150px'}}></th>
+                                <th>ชื่อลูกค้า</th>
+                                <th>เบอร์โทรศัพท์</th>
+                                <th>อุปกรณ์</th>
+                                <th>อาการ</th>
+                                <th>วันที่รับซ่อม</th>
+                                <th>วันที่ซ่อมเสร็จ</th>
+                                <th>สถานะ</th>
+                                <th>ค่าบริการ</th>
+                                <th style={{width: '330px'}}></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -177,14 +217,22 @@ export default function Page() {
                                     <td>{dayjs(repairRecord.createAt).format('DD/MM/YYYY')}</td>
                                     <td>{repairRecord.endJobDate ? dayjs(repairRecord.endJobDate).format('DD/MM/YYYY') : '-'}</td>
                                     <td>{getStatusName(repairRecord.status)}</td>
+                                    <td>{repairRecord.amount?.toLocaleString('th-TH')}</td>
                                     <td>
                                         <button className="btn-edit"
+                                            onClick={() => openModalReceive(repairRecord)}>
+                                            <i className="fa-solid fa-check mr-2"></i>
+                                            รับเครื่อง
+                                        </button>
+                                        <button className="btn-edit"
                                             onClick={() => handleEdit(repairRecord)}>
-                                            <i className="fa-solid fa-edit"></i>
+                                            <i className="fa-solid fa-edit mr-2"></i>
+                                            แก้ไข
                                         </button>
                                         <button className="btn-delete"
                                             onClick={() => handleDelete(repairRecord.id)}>
-                                            <i className="fa-solid fa-trash"></i>
+                                            <i className="fa-solid fa-trash mr-2"></i>
+                                            ลบ
                                         </button>
                                     </td>
                                 </tr>
@@ -194,19 +242,19 @@ export default function Page() {
                 </div>
             </div>
 
-            <Modal title="Add Repairing" 
+            <Modal title="เพิ่มการซ่อม" 
                 isOpen={showModal} 
                 onClose={() => closeModal()} size="xl">
                 <div className="flex gap-4">
                     <div className="w-1/2">
-                        <div>Customer Name</div>
+                        <div>ชื่อลูกค้า</div>
                         <input type="text" 
                             value={customerName} 
                             onChange={(e) => setCustomerName(e.target.value)} 
                             className="form-control w-full" />
                     </div>
                     <div className="w-1/2">
-                        <div>Phone Number</div>
+                        <div>เบอร์โทรศัพท์</div>
                         <input type="text" 
                             value={customerPhone} 
                             onChange={(e) => setCustomerPhone(e.target.value)}
@@ -214,10 +262,10 @@ export default function Page() {
                     </div>
                 </div>
 
-                <div className="mt-4">Device Name (In the system)</div>
+                <div className="mt-4">อุปกรณ์ (ในระบบ)</div>
                 <select className="form-control w-full" value={deviceId}
                     onChange={(e) => handleDeviceChange(e.target.value)}>
-                    <option value="">--- select devices ---</option>
+                    <option value="">--- เลือกอุปกรณ์ ---</option>
                     {devices.map((device: any) => (
                         <option value={device.id} key={device.id}>
                             {device.name}
@@ -225,7 +273,7 @@ export default function Page() {
                     ))}
                 </select>
 
-                <div className="mt-4">Device Name (Outside)</div>
+                <div className="mt-4">อุปกรณ์ (นอกระบบ)</div>
                 <input type="text"
                     value={deviceName}
                     onChange={(e) => setDeviceName(e.target.value)}
@@ -233,14 +281,14 @@ export default function Page() {
 
                 <div className="flex gap-4 mt-4">
                     <div className="w-1/2">
-                        <span>Barcode</span>
+                        <span>บาร์โค้ด</span>
                         <input type="text"
                             value={deviceBarcode} 
                             onChange={(e) => setDeviceBarcode(e.target.value)}
                             className="form-control w-full" />
                     </div>
                     <div className="w-1/2">
-                        <span>Serial</span>
+                        <span>รหัสอุปกรณ์</span>
                         <input type="text"
                             value={deviceSerial}
                             onChange={(e) => setDeviceSerial(e.target.value)}
@@ -248,21 +296,46 @@ export default function Page() {
                     </div>
                 </div>
 
-                <div className="mt-4">Expiration Date</div>
+                <div className="mt-4">วันที่สิ้นสุด</div>
                 <input type="date"
                     value={expireDate}
                     onChange={(e) => setExpireDate(e.target.value)}
                     className="form-control w-full" />
 
-                <div className="mt-4">Problem</div>
+                <div className="mt-4">อาการ</div>
                 <textarea className="form-control w-full"
                     value={problem}
                     onChange={(e) => setProblem(e.target.value)}></textarea>
 
                 <button className="btn-primary mt-4" onClick={() => handleSave()}>
                     <i className="fa-solid fa-check mr-3"></i>
-                    Save
+                    บันทึก
                 </button>
+            </Modal>
+
+            <Modal title="รับเครื่อง"
+                isOpen={showModalReceive}
+                onClose={() => closeModalReceive()} size="xl">
+                <div className="flex gap-4">
+                    <div className="w-1/2">
+                        <div>ชื่อลูกค้า</div>
+                        <input type="text" className="form-control w-full disabled" readOnly
+                            value={receiveCustomer} />
+                    </div>
+                    <div className="w-1/2">
+                    <div>ค่าบริการ</div>
+                        <input type="number" className="form-control w-full"
+                            value={receiveAmount}
+                            onChange={(e) => setReceiveAmount(Number(e.target.value))} />
+                    </div>
+                </div>
+
+                <div>
+                    <button className="btn-primary mt-4" onClick={handleReceive}>
+                        <i className="fa-solid fa-check mr-3"></i>
+                        บันทึก
+                    </button>
+                </div>
             </Modal>
         </>
     );
