@@ -58,6 +58,10 @@ export default function Page() {
     }
 
     const handleShowModal = () => {
+        setShowModal(true);
+    }
+
+    const handleCloseModal = () => {
         setDepartmentId('');
         setSectionId('');
         setId('');
@@ -65,10 +69,6 @@ export default function Page() {
         setPassword('');
         setConfirmPassword('');
         setLevel('');
-        setShowModal(true);
-    }
-
-    const handleCloseModal = () => {
         setShowModal(false);
     }
 
