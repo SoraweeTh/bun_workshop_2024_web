@@ -19,7 +19,14 @@ export default function Page() {
 
     const fetchCompany = async () => {
         try {
-            const response = await axios(`${config.apiUrl}/api/company/info`);
+            const token = localStorage.getItem(config.tokenKey);
+            const headers = {
+                'Authorization': `Bearer ${token}`
+            }
+            const response = await axios(`${config.apiUrl}/api/company/info`, {
+                headers: headers
+            });
+            
             if (response.data.id !== undefined) {
                 setName(response.data.name);
                 setAddress(response.data.address);
